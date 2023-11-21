@@ -1,3 +1,4 @@
+import json
 from urllib.request import urlopen
 import re
 
@@ -34,4 +35,7 @@ for n in separate_players:
     final_point_data[parsed_name] = parsed_point
     i += 1
 
-print(final_point_data)
+# Writing data to JSON file
+json_object = json.dumps(final_point_data, indent=4)
+with open("../data/point_data.json", "w") as outfile:
+    outfile.write(json_object)
