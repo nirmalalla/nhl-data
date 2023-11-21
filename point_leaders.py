@@ -33,3 +33,5 @@ for n in separate_players:
    
     final_point_data[parsed_name] = parsed_point
     i += 1
+
+print(final_point_data)
