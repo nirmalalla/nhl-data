@@ -28,11 +28,13 @@ for n in separate_players:
     unparsed_point = re.findall("<td class=\"Table__TD\">.*</td>", separate_players[i])
     parsed_point = re.sub("<.*?>", "", unparsed_point[0])
     
+    unparsed_team = re.findall("<span class=\"pl2 n10 leaderCell__teamAbbrev\">.*</span>", separate_players[i])
+    parsed_team = re.sub("<.*?>", "", unparsed_team[0])
 
     unparsed_name = re.findall("title.*\" data", separate_players[i])
     parsed_name = re.findall("\".*\"", unparsed_name[0])[0].replace("\"", "")
    
-    final_point_data[parsed_name] = parsed_point
+    final_point_data[parsed_name] = [parsed_team, parsed_point]
     i += 1
 
 # Writing data to JSON file
