@@ -4,26 +4,23 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
+from sklearn import linear_model
 
-df = pd.read_csv("./data/skaters2023.csv")
+df = pd.read_csv("./data/_data - skaters2022.csv")
 
-# Formatting data to show points and goals with names
-player_stats = df[["name", "situation", "icetime", "I_F_goals", "I_F_points"]]
-player_stats = player_stats[player_stats["situation"] == "all"]
-player_stats = player_stats.rename(columns={"I_F_goals": "goals", "I_F_points": "points"})
+goals_X_train = df[["games_played"]]
+goals_y_train = df["I_F_points"]
+labels = df["name"]
 
-X = player_stats[["icetime"]]
-y = player_stats["points"]
+regr = linear_model.LinearRegression()
+regr.fit(goals_X_train, goals_y_train)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+goals_y_pred = regr.predict(goals_X_train)
 
-model = LinearRegression()
-model.fit(X_train, y_train)
+plt.plot(goals_X_train, goals_y_pred, color="blue", linewidth="3", label="Predicted Values")
+plt.scatter(goals_X_train, goals_y_train, label="Real Data Points")
+plt.xlabel("Total Games Played")
+plt.ylabel("Total Points Scored")
 
-predictions = model.predict(X_test)
-
-mse = mean_squared_error(y_test, predictions)
-r2 = r2_score(y_test, predictions)
-
-print(f"Mean Squared Error: {mse}")
-print(f"R-squared: {r2}")
+plt.legend()
+plt.show()
