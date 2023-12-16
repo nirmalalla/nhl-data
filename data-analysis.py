@@ -15,7 +15,11 @@ winners = {
 }
 
 def calculateValue(goals, points, icetime, games):
-    return ((goals + points) / (icetime / games))
+    term1 = goals / games
+    term2 = points / games
+    term3 = icetime / games
+    
+    return (term1 + term2 + term3)
 
 def createDataframe():
     values = {}
@@ -38,6 +42,42 @@ def gatherData(name, year):
 
     return calculateValue(goals, points, icetime, games)
 
+def gather2023Data():
+    df = pd.read_csv("./data/_data - skaters2023.csv")
+    X = []
+    y = []
+    threshold_games = max(df["games_played"]) * 0.90
+    threshold_icetime = max(df["icetime"]) * 0.75
+    name_values = []
+
+    for name in df["name"]:
+        tmp_df = df.loc[df["name"] == name]
+        games = tmp_df.at[tmp_df.index[0], "games_played"]
+        icetime = tmp_df.at[tmp_df.index[0], "icetime"]
+        
+        if (games >= threshold_games and icetime >= threshold_icetime):
+            X.append([2023])
+            goals = tmp_df.at[tmp_df.index[0], "I_F_goals"]
+            points = tmp_df.at[tmp_df.index[0], "I_F_points"]
+            y.append(calculateValue(goals, points, icetime, games))
+            name_values.append([name, calculateValue(goals, points, games, icetime)])
+    
+    plt.scatter(X, y, marker="o", color="red")
+    return name_values
+
+def findClosest(name_values, pred):
+    min = []
+    for n in name_values:
+        if (len(min) < 5 or abs(n[1] - pred) < min[len(min) - 1][1]):
+            if(len(min) == 5):
+                min[4] = [n[0], abs(n[1] - pred)]
+            else:
+                min.append([n[0], abs(n[1] - pred)])
+            
+            min = sorted(min, key=lambda x: x[1])
+
+    return min
+
 def plotData():
     df = createDataframe()
 
@@ -52,10 +92,14 @@ def plotData():
     regr =  LinearRegression()
     regr.fit(X_train, y_train)
 
-    X_test = np.array([[2023]])
+    X_test = np.array([[2022.5], [2023], [2023.5]])
 
     y_pred = regr.predict(X_test)
     
+    name_values = gather2023Data()
+    closest_player = findClosest(name_values, y_pred[0])
+    print(closest_player)
+
     plt.plot(X_test, y_pred, linewidth="3", marker="o")
     plt.show()
 
