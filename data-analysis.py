@@ -1,26 +1,62 @@
-import numpy as np
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
+from sklearn.linear_model import Ridge
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
 from sklearn import linear_model
 
-df = pd.read_csv("./data/_data - skaters2022.csv")
 
-goals_X_train = df[["games_played"]]
-goals_y_train = df["I_F_points"]
-labels = df["name"]
+winners = {
+    2018: "Taylor Hall",
+    2019: "Nikita Kucherov",
+    2020: "Leon Draisaitl",
+    2021: "Connor McDavid",
+    2022: "Auston Matthews"
+}
 
-regr = linear_model.LinearRegression()
-regr.fit(goals_X_train, goals_y_train)
+def calculateValue(goals, points, icetime, games):
+    return ((goals + points) / (icetime / games))
 
-goals_y_pred = regr.predict(goals_X_train)
+def createDataframe():
+    values = {}
+    for key in winners.keys():
+        values[key] = gatherData(winners.get(key), key)
 
-plt.plot(goals_X_train, goals_y_pred, color="blue", linewidth="3", label="Predicted Values")
-plt.scatter(goals_X_train, goals_y_train, label="Real Data Points")
-plt.xlabel("Total Games Played")
-plt.ylabel("Total Points Scored")
+    df = pd.DataFrame(columns=winners.keys())
+    df.loc[len(df)] = values
+    return df
 
-plt.legend()
-plt.show()
+    
+def gatherData(name, year):
+    tmp_df = pd.read_csv("./data/_data - skaters" + str(year) + ".csv")
+    tmp_df = tmp_df.loc[tmp_df["name"] == name]
+
+    goals = tmp_df.at[tmp_df.index[0], "I_F_goals"]
+    points = tmp_df.at[tmp_df.index[0], "I_F_points"]
+    icetime = tmp_df.at[tmp_df.index[0], "icetime"]
+    games = tmp_df.at[tmp_df.index[0], "games_played"]
+
+    return calculateValue(goals, points, icetime, games)
+
+def plotData():
+    df = createDataframe()
+
+    X_train = []
+
+    for key in winners.keys():
+        X_train.append([key])
+
+    
+    y_train = np.array(df.values[0])
+    
+    regr =  LinearRegression()
+    regr.fit(X_train, y_train)
+
+    X_test = np.array([[2023]])
+
+    y_pred = regr.predict(X_test)
+    
+    plt.plot(X_test, y_pred, linewidth="3", marker="o")
+    plt.show()
+
+plotData()
