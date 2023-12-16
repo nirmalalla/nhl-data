@@ -6,6 +6,8 @@ from sklearn import linear_model
 
 
 winners = {
+    2016: "Patrick Kane",
+    2017: "Connor McDavid",
     2018: "Taylor Hall",
     2019: "Nikita Kucherov",
     2020: "Leon Draisaitl",
@@ -45,8 +47,8 @@ def gather2023Data():
     df = pd.read_csv("./data/_data - skaters2023.csv")
     X = []
     y = []
-    threshold_games = max(df["games_played"]) * 0.75
-    threshold_icetime = max(df["icetime"]) * 0.75
+    threshold_games = max(df["games_played"]) * 0.60
+    threshold_icetime = max(df["icetime"]) * 0.40
     threshold_points = max(df["I_F_points"]) * 0.60
     
     name_values = []
