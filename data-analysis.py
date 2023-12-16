@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.linear_model import Ridge
 from sklearn.linear_model import LinearRegression
 from sklearn import linear_model
 
@@ -15,11 +14,11 @@ winners = {
 }
 
 def calculateValue(goals, points, icetime, games):
-    term1 = goals / games
-    term2 = points / games
-    term3 = icetime / games
-    
-    return (term1 + term2 + term3)
+    term1 = 0.3 * (goals / games)
+    term2 = 0.6 * (points / games)
+    term3 = 0.1 * (icetime / games)
+
+    return term1 + term2 + term3
 
 def createDataframe():
     values = {}
@@ -46,33 +45,36 @@ def gather2023Data():
     df = pd.read_csv("./data/_data - skaters2023.csv")
     X = []
     y = []
-    threshold_games = max(df["games_played"]) * 0.90
+    threshold_games = max(df["games_played"]) * 0.75
     threshold_icetime = max(df["icetime"]) * 0.75
+    threshold_points = max(df["I_F_points"]) * 0.60
+    
     name_values = []
 
     for name in df["name"]:
         tmp_df = df.loc[df["name"] == name]
         games = tmp_df.at[tmp_df.index[0], "games_played"]
         icetime = tmp_df.at[tmp_df.index[0], "icetime"]
+        position = tmp_df.at[tmp_df.index[0], "position"]
+        points = tmp_df.at[tmp_df.index[0], "I_F_points"]
         
-        if (games >= threshold_games and icetime >= threshold_icetime):
+        if (games >= threshold_games and icetime >= threshold_icetime and position != "D" and points >= threshold_points):
             X.append([2023])
             goals = tmp_df.at[tmp_df.index[0], "I_F_goals"]
-            points = tmp_df.at[tmp_df.index[0], "I_F_points"]
-            y.append(calculateValue(goals, points, icetime, games))
-            name_values.append([name, calculateValue(goals, points, games, icetime)])
-    
-    plt.scatter(X, y, marker="o", color="red")
+            value = calculateValue(goals, points, icetime, games)
+            y.append(value)
+            name_values.append([name, value])
+
     return name_values
 
 def findClosest(name_values, pred):
     min = []
     for n in name_values:
-        if (len(min) < 5 or abs(n[1] - pred) < min[len(min) - 1][1]):
+        if (len(min) < 5 or abs(n[1] - pred) < abs(min[len(min) - 1][1] - pred)):
             if(len(min) == 5):
-                min[4] = [n[0], abs(n[1] - pred)]
+                min[4] = [n[0], n[1]]
             else:
-                min.append([n[0], abs(n[1] - pred)])
+                min.append([n[0], n[1]])
             
             min = sorted(min, key=lambda x: x[1])
 
@@ -100,6 +102,9 @@ def plotData():
     closest_player = findClosest(name_values, y_pred[0])
     print(closest_player)
 
+    X = [[2023], [2023], [2023], [2023], [2023]]
+    y = [closest_player[0][1], closest_player[1][1], closest_player[2][1], closest_player[3][1], closest_player[4][1]]
+    plt.scatter(X, y, marker="o", color="red")
     plt.plot(X_test, y_pred, linewidth="3", marker="o")
     plt.show()
 
