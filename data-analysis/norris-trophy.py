@@ -4,15 +4,15 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn import linear_model
 
-
 winners = {
-    2016: "Patrick Kane",
-    2017: "Connor McDavid",
-    2018: "Taylor Hall",
-    2019: "Nikita Kucherov",
-    2020: "Leon Draisaitl",
-    2021: "Connor McDavid",
-    2022: "Auston Matthews"
+    2022: "Erik Karlsson",
+    2021: "Cale Makar",
+    2020: "Adam Fox",
+    2019: "Roman Josi",
+    2018: "Mark Giordano",
+    2017: "Victor Hedman",
+    2016: "Brent Burns",
+    2015: "Drew Doughty"
 }
 
 def calculateValue(goals, points, icetime, games):
@@ -20,7 +20,7 @@ def calculateValue(goals, points, icetime, games):
     term2 = 0.6 * (points / games)
     term3 = 0.1 * (icetime / games)
 
-    return term1 + term2 + term3
+    return (term1 + term2 + term3)
 
 def createDataframe():
     values = {}
@@ -31,9 +31,8 @@ def createDataframe():
     df.loc[len(df)] = values
     return df
 
-    
 def gatherData(name, year):
-    tmp_df = pd.read_csv("./data/_data - skaters" + str(year) + ".csv")
+    tmp_df = pd.read_csv("../data/_data - skaters" + str(year) + ".csv")
     tmp_df = tmp_df.loc[tmp_df["name"] == name]
 
     goals = tmp_df.at[tmp_df.index[0], "I_F_goals"]
@@ -44,12 +43,11 @@ def gatherData(name, year):
     return calculateValue(goals, points, icetime, games)
 
 def gather2023Data():
-    df = pd.read_csv("./data/_data - skaters2023.csv")
+    df = pd.read_csv("../data/_data - skaters2023.csv")
     X = []
     y = []
     threshold_games = max(df["games_played"]) * 0.60
-    threshold_icetime = max(df["icetime"]) * 0.40
-    threshold_points = max(df["I_F_points"]) * 0.60
+    threshold_icetime = max(df["icetime"]) * 0.60
     
     name_values = []
 
@@ -60,7 +58,7 @@ def gather2023Data():
         position = tmp_df.at[tmp_df.index[0], "position"]
         points = tmp_df.at[tmp_df.index[0], "I_F_points"]
         
-        if (games >= threshold_games and icetime >= threshold_icetime and position != "D" and points >= threshold_points):
+        if (games >= threshold_games and icetime >= threshold_icetime and position == "D"):
             X.append([2023])
             goals = tmp_df.at[tmp_df.index[0], "I_F_goals"]
             value = calculateValue(goals, points, icetime, games)
