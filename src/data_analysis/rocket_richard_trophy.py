@@ -5,22 +5,19 @@ from sklearn.linear_model import LinearRegression
 from sklearn import linear_model
 
 winners = {
-    2022: "Erik Karlsson",
-    2021: "Cale Makar",
-    2020: "Adam Fox",
-    2019: "Roman Josi",
-    2018: "Mark Giordano",
-    2017: "Victor Hedman",
-    2016: "Brent Burns",
-    2015: "Drew Doughty"
+    2015: "Alex Ovechkin",
+    2016: "Sidney Crosby",
+    2017: "Alex Ovechkin",
+    2018: "Alex Ovechkin",
+    2019: "David Pastrnak",
+    2019: "Alex Ovechkin",
+    2020: "Auston Matthews",
+    2021: "Auston Matthews",
+    2022: "Connor McDavid"
 }
 
-def calculateValue(goals, points, icetime, games):
-    term1 = 0.3 * (goals / games)
-    term2 = 0.6 * (points / games)
-    term3 = 0.1 * (icetime / games)
-
-    return (term1 + term2 + term3)
+def calculateValue(goals, icetime, games):
+    return (goals / (icetime))
 
 def createDataframe():
     values = {}
@@ -36,18 +33,17 @@ def gatherData(name, year):
     tmp_df = tmp_df.loc[tmp_df["name"] == name]
 
     goals = tmp_df.at[tmp_df.index[0], "I_F_goals"]
-    points = tmp_df.at[tmp_df.index[0], "I_F_points"]
     icetime = tmp_df.at[tmp_df.index[0], "icetime"]
     games = tmp_df.at[tmp_df.index[0], "games_played"]
 
-    return calculateValue(goals, points, icetime, games)
+    return calculateValue(goals, icetime, games)
 
 def gather2023Data():
     df = pd.read_csv("../data/_data - skaters2023.csv")
     X = []
     y = []
-    threshold_games = max(df["games_played"]) * 0.60
-    threshold_icetime = max(df["icetime"]) * 0.60
+    threshold_games = max(df["games_played"]) * 0.5
+    threshold_icetime = max(df["icetime"]) * 0.5
     
     name_values = []
 
@@ -58,10 +54,10 @@ def gather2023Data():
         position = tmp_df.at[tmp_df.index[0], "position"]
         points = tmp_df.at[tmp_df.index[0], "I_F_points"]
         
-        if (games >= threshold_games and icetime >= threshold_icetime and position == "D"):
+        if (games >= threshold_games and icetime >= threshold_icetime and position != "D"):
             X.append([2023])
             goals = tmp_df.at[tmp_df.index[0], "I_F_goals"]
-            value = calculateValue(goals, points, icetime, games)
+            value = calculateValue(goals, icetime, games)
             y.append(value)
             name_values.append([name, value])
 
@@ -80,7 +76,7 @@ def findClosest(name_values, pred):
 
     return min
 
-def plotData():
+def rocketRichardTrophyData():
     df = createDataframe()
 
     X_train = []
@@ -100,12 +96,5 @@ def plotData():
     
     name_values = gather2023Data()
     closest_player = findClosest(name_values, y_pred[0])
-    print(closest_player)
 
-    X = [[2023], [2023], [2023], [2023], [2023]]
-    y = [closest_player[0][1], closest_player[1][1], closest_player[2][1], closest_player[3][1], closest_player[4][1]]
-    plt.scatter(X, y, marker="o", color="red")
-    plt.plot(X_test, y_pred, linewidth="3", marker="o")
-    plt.show()
-
-plotData()
+    return closest_player
