@@ -3,9 +3,11 @@ from data_analysis.hart_trophy import hartTrophyData
 from data_analysis.art_ross_trophy import artRossTrophyData
 from data_analysis.norris_trophy import norrisTrophyData
 from data_analysis.rocket_richard_trophy import rocketRichardTrophyData
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/api/hart", methods=["GET"])
 def get_hart():

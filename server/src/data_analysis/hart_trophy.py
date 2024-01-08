@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn import linear_model
+from sklearn.multioutput import MultiOutputRegressor
 
 
 winners = {
@@ -16,20 +17,14 @@ winners = {
 }
 
 def calculateValue(goals, points, icetime, games):
-    term1 = 0.3 * (goals / games)
-    term2 = 0.6 * (points / games)
-    term3 = 0.1 * (icetime / games)
-
-    return term1 + term2 + term3
+    return [goals / games, points / games, icetime / games]
 
 def createDataframe():
-    values = {}
+    values = []
     for key in winners.keys():
-        values[key] = gatherData(winners.get(key), key)
+        values.append(gatherData(winners.get(key), key))
 
-    df = pd.DataFrame(columns=winners.keys())
-    df.loc[len(df)] = values
-    return df
+    return values
 
     
 def gatherData(name, year):
@@ -47,7 +42,7 @@ def gather2023Data():
     df = pd.read_csv("../data/_data - skaters2023.csv")
     X = []
     y = []
-    threshold_games = max(df["games_played"]) * 0.60
+    threshold_games = max(df["games_played"]) * 0.70
     threshold_icetime = max(df["icetime"]) * 0.40
     threshold_points = max(df["I_F_points"]) * 0.60
     
@@ -69,14 +64,27 @@ def gather2023Data():
 
     return name_values
 
+def findDistance(data, pred):
+    total = 0
+    index = 0
+
+    for n in data:
+        total += abs(pred[index] - n)
+        index += 1
+
+    return total
+
+
 def findClosest(name_values, pred):
     min = []
     for n in name_values:
-        if (len(min) < 5 or abs(n[1] - pred) < abs(min[len(min) - 1][1] - pred)):
+        distance = findDistance(n[1], pred)
+
+        if (len(min) < 5 or distance < min[len(min) - 1][1]):
             if(len(min) == 5):
-                min[4] = [n[0], n[1]]
+                min[4] = [n[0], distance]
             else:
-                min.append([n[0], n[1]])
+                min.append([n[0], distance])
             
             min = sorted(min, key=lambda x: x[1])
 
@@ -91,16 +99,23 @@ def hartTrophyData():
         X_train.append([key])
 
     
-    y_train = np.array(df.values[0])
+    y_train = df
+    print(y_train)
     
-    regr =  LinearRegression()
+    regr =  MultiOutputRegressor(LinearRegression())
     regr.fit(X_train, y_train)
 
     X_test = np.array([[2022.5], [2023], [2023.5]])
 
     y_pred = regr.predict(X_test)
-    
+
     name_values = gather2023Data()
-    closest_player = findClosest(name_values, y_pred[0])
+    print(y_pred)
+    closest_player = findClosest(name_values, y_pred[1])
+
+    obj = {}
+
+    for n in closest_player:
+        obj[n[0]] = n[1]
 
     return closest_player
