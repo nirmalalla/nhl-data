@@ -91,16 +91,13 @@ def findClosest(name_values, pred):
     return min
 
 def hartTrophyData():
-    df = createDataframe()
-
     X_train = []
 
     for key in winners.keys():
         X_train.append([key])
 
     
-    y_train = df
-    print(y_train)
+    y_train = createDataframe()
     
     regr =  MultiOutputRegressor(LinearRegression())
     regr.fit(X_train, y_train)
@@ -110,12 +107,6 @@ def hartTrophyData():
     y_pred = regr.predict(X_test)
 
     name_values = gather2023Data()
-    print(y_pred)
     closest_player = findClosest(name_values, y_pred[1])
-
-    obj = {}
-
-    for n in closest_player:
-        obj[n[0]] = n[1]
-
+    
     return closest_player
