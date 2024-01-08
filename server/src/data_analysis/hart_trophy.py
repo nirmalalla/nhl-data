@@ -20,6 +20,7 @@ def calculateValue(goals, points, icetime, games):
     return [goals / games, points / games, icetime / games]
 
 def createDataframe():
+    #Creating a 2D array to store previous winners with their data
     values = []
     for key in winners.keys():
         values.append(gatherData(winners.get(key), key))
@@ -28,17 +29,21 @@ def createDataframe():
 
     
 def gatherData(name, year):
+    #Separating dataframe to only the specified player
     tmp_df = pd.read_csv("../data/_data - skaters" + str(year) + ".csv")
     tmp_df = tmp_df.loc[tmp_df["name"] == name]
 
+    #Gathering relevant data for the player
     goals = tmp_df.at[tmp_df.index[0], "I_F_goals"]
     points = tmp_df.at[tmp_df.index[0], "I_F_points"]
     icetime = tmp_df.at[tmp_df.index[0], "icetime"]
     games = tmp_df.at[tmp_df.index[0], "games_played"]
 
+    #Returning the calculated data points based on number of games played
     return calculateValue(goals, points, icetime, games)
 
 def gather2023Data():
+    #Reading current data and determining thresholds
     df = pd.read_csv("../data/_data - skaters2023.csv")
     X = []
     y = []
@@ -48,6 +53,7 @@ def gather2023Data():
     
     name_values = []
 
+    #Loop to gather data on each player who meets the required thresholds
     for name in df["name"]:
         tmp_df = df.loc[df["name"] == name]
         games = tmp_df.at[tmp_df.index[0], "games_played"]
@@ -65,6 +71,7 @@ def gather2023Data():
     return name_values
 
 def findDistance(data, pred):
+    #Calculating total distance from predicted value
     total = 0
     index = 0
 
@@ -76,6 +83,7 @@ def findDistance(data, pred):
 
 
 def findClosest(name_values, pred):
+    #Looping through the name_values to find the top 5 closest players
     min = []
     for n in name_values:
         distance = findDistance(n[1], pred)
@@ -99,14 +107,17 @@ def hartTrophyData():
     
     y_train = createDataframe()
     
+    #Fitting the model with a regressive model using the data
     regr =  MultiOutputRegressor(LinearRegression())
     regr.fit(X_train, y_train)
 
     X_test = np.array([[2022.5], [2023], [2023.5]])
 
+    #Testing the data with new values
     y_pred = regr.predict(X_test)
 
+    #Finding the top 5 closest and returning it
     name_values = gather2023Data()
     closest_player = findClosest(name_values, y_pred[1])
-    
+
     return closest_player
