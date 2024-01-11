@@ -17,8 +17,8 @@ winners = {
     2023: "Connor McDavid"
 }
 
-def calculateValue(goals, points, icetime, games):
-    return [goals / games, points / games, icetime / games]
+def calculateValue(points, icetime, games):
+    return [points / games, icetime / games]
 
 def createDataframe():
     #Creating a 2D array to store previous winners with their data
@@ -33,12 +33,11 @@ def gatherData(name, year):
     tmp_df = pd.read_csv("../data/_data - skaters" + str(year) + ".csv")
     tmp_df = tmp_df.loc[tmp_df["name"] == name]
 
-    goals = tmp_df.at[tmp_df.index[0], "I_F_goals"]
     points = tmp_df.at[tmp_df.index[0], "I_F_points"]
     icetime = tmp_df.at[tmp_df.index[0], "icetime"]
     games = tmp_df.at[tmp_df.index[0], "games_played"]
 
-    return calculateValue(goals, points, icetime, games)
+    return calculateValue(points, icetime, games)
 
 def gather2023Data():
     df = pd.read_csv("../data/_data - skaters2023.csv")
@@ -53,12 +52,11 @@ def gather2023Data():
         tmp_df = df.loc[df["name"] == name]
         games = tmp_df.at[tmp_df.index[0], "games_played"]
         icetime = tmp_df.at[tmp_df.index[0], "icetime"]
-        goals = tmp_df.at[tmp_df.index[0], "I_F_goals"]
         points = tmp_df.at[tmp_df.index[0], "I_F_points"]
         
         if (games >= threshold_games and icetime >= threshold_icetime):
             X.append([2023])
-            value = calculateValue(goals, points, icetime, games)
+            value = calculateValue(points, icetime, games)
             y.append(value)
             name_values.append([name, value])
 
