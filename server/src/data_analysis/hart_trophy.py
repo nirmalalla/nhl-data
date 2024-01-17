@@ -7,13 +7,18 @@ from sklearn.multioutput import MultiOutputRegressor
 
 
 winners = {
-    2016: "Patrick Kane",
-    2017: "Connor McDavid",
-    2018: "Taylor Hall",
-    2019: "Nikita Kucherov",
-    2020: "Leon Draisaitl",
-    2021: "Connor McDavid",
-    2022: "Auston Matthews"
+    2010: "Corey Perry",
+    2011: "Evgeni Malkin",
+    2012: "Alex Ovechkin",
+    2013: "Sidney Crosby",
+    2015: "Patrick Kane",
+    2016: "Connor McDavid",
+    2017: "Taylor Hall",
+    2018: "Nikita Kucherov",
+    2019: "Leon Draisaitl",
+    2020: "Connor McDavid",
+    2021: "Auston Matthews",
+    2022: "Connor McDavid"
 }
 
 def calculateValue(goals, points, icetime, games):

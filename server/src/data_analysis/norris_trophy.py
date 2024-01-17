@@ -6,14 +6,19 @@ from sklearn import linear_model
 from sklearn.multioutput import MultiOutputRegressor
 
 winners = {
-    2022: "Erik Karlsson",
-    2021: "Cale Makar",
-    2020: "Adam Fox",
-    2019: "Roman Josi",
-    2018: "Mark Giordano",
-    2017: "Victor Hedman",
+    2010: "Nicklas Lidstrom",
+    2011: "Erik Karlsson",
+    2012: "P.K. Subban",
+    2013: "Duncan Keith",
+    2014: "Erik Karlsson",
+    2015: "Drew Doughty",
     2016: "Brent Burns",
-    2015: "Drew Doughty"
+    2017: "Victor Hedman",
+    2018: "Mark Giordano",
+    2019: "Roman Josi",
+    2020: "Adam Fox",
+    2021: "Cale Makar",
+    2022: "Erik Karlsson"
 }
 
 def calculateValue(goals, points, icetime, games):

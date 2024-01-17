@@ -6,6 +6,11 @@ from sklearn import linear_model
 from sklearn.multioutput import MultiOutputRegressor
 
 winners = {
+    2010: "Corey Perry",
+    2011: "Steven Stamkos",
+    2012: "Alex Ovechkin",
+    2013: "Alex Ovechkin",
+    2014: "Alex Ovechkin",
     2015: "Alex Ovechkin",
     2016: "Sidney Crosby",
     2017: "Alex Ovechkin",

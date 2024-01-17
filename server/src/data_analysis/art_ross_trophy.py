@@ -6,15 +6,19 @@ from sklearn import linear_model
 from sklearn.multioutput import MultiOutputRegressor
 
 winners = {
-    2015: "Jamie Benn",
-    2016: "Patrick Kane",
+    2010: "Daniel Sedin",
+    2011: "Evgeni Malkin",
+    2012: "Martin St. Louis",
+    2013: "Sidney Crosby",
+    2014: "Jamie Benn",
+    2015: "Patrick Kane",
+    2016: "Connor McDavid",
     2017: "Connor McDavid",
-    2018: "Connor McDavid",
-    2019: "Nikita Kucherov",
-    2020: "Leon Draisaitl",
+    2018: "Nikita Kucherov",
+    2019: "Leon Draisaitl",
+    2020: "Connor McDavid",
     2021: "Connor McDavid",
-    2022: "Connor McDavid",
-    2023: "Connor McDavid"
+    2022: "Connor McDavid"
 }
 
 def calculateValue(points, icetime, games):
