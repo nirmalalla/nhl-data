@@ -21,8 +21,8 @@ winners = {
     2022: "Connor McDavid"
 }
 
-def calculateValue(goals, points, icetime, games):
-    return [goals / games, points / games, icetime / games]
+def calculateValue(goals, points, icetime, games, onIceExGoals, corsi):
+    return [goals / games, points / games, icetime / games, onIceExGoals, corsi]
 
 def createDataframe():
     #Creating a 2D array to store previous winners with their data
@@ -43,9 +43,11 @@ def gatherData(name, year):
     points = tmp_df.at[tmp_df.index[0], "I_F_points"]
     icetime = tmp_df.at[tmp_df.index[0], "icetime"]
     games = tmp_df.at[tmp_df.index[0], "games_played"]
+    onIceExGoals = tmp_df.at[tmp_df.index[0], "onIce_xGoalsPercentage"]
+    corsi = tmp_df.at[tmp_df.index[0], "onIce_corsiPercentage"]
 
     #Returning the calculated data points based on number of games played
-    return calculateValue(goals, points, icetime, games)
+    return calculateValue(goals, points, icetime, games, onIceExGoals, corsi)
 
 def gather2023Data():
     #Reading current data and determining thresholds
@@ -65,11 +67,13 @@ def gather2023Data():
         icetime = tmp_df.at[tmp_df.index[0], "icetime"]
         position = tmp_df.at[tmp_df.index[0], "position"]
         points = tmp_df.at[tmp_df.index[0], "I_F_points"]
+        onIceExGoals = tmp_df.at[tmp_df.index[0], "onIce_xGoalsPercentage"]
+        corsi = tmp_df.at[tmp_df.index[0], "onIce_corsiPercentage"]
         
         if (games >= threshold_games and icetime >= threshold_icetime and position != "D" and points >= threshold_points):
             X.append([2023])
             goals = tmp_df.at[tmp_df.index[0], "I_F_goals"]
-            value = calculateValue(goals, points, icetime, games)
+            value = calculateValue(goals, points, icetime, games, onIceExGoals, corsi)
             y.append(value)
             name_values.append([name, value])
 
