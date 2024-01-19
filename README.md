@@ -1,6 +1,6 @@
 # nhl-data
 
-Predictive modeling application that uses predictive modeling to predict the outcome for various NHL awards.
+Application that uses predictive modeling to predict the outcome for various NHL awards.
 
 ## How it Works
 
