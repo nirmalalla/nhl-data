@@ -13,3 +13,5 @@ Ensure you are in the src directory and have flask installed. Then enter the com
 ```bash
 flask run
 ```
+
+Then using Postman, or something similar, connect to localhost:3001, with a GET flag. The endpoint is "localhost:3001/api/{award}. When running replace award with any of the following: hart, norris, art_ross, rocket_richard.
